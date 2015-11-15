@@ -6,7 +6,7 @@ from random import randint
 #Variables. Inicializar:
 posX,posY,posXenemigo,posYenemigo = 65,197,250,125
 #VidaDePersonaje,VidaEnemigo = 120,350
-Contador,e,S = 0,0,False
+Contador,e,S,aleatorio = 0,0,False,200
 a = 0
 rojo,azul,negro,amarillo,verde = (170,58,46),(76,108,145),(0,0,0),(200,188,68),(100,168,74)
 color = rojo
@@ -17,21 +17,25 @@ PQuieto = pygame.image.load("DerPersonaje/Quieto/Quieto0.png")#0~2
 CARGAR = PQuieto
 EQuieto = pygame.image.load("Enemigo/Enemigo0.png")#0~7
 ENEMIGO = EQuieto
+GOLPE = pygame.image.load("Enemigo/Llamas/vacio.png")
+GOLPE2 = GOLPE
 
 #Ventana: Parametros iniciales
 pygame.init()
 ventana = pygame.display.set_mode((600,375))
 pygame.display.set_caption("Batalla")
 fuente = pygame.font.SysFont("Verdana",20)
-cuenta = fuente.render("Cuenta: "+str(Contador),0,verde)
+cuenta = fuente.render(str(Contador),0,verde)
 c0 = fuente.render("Ataque 1",0,negro)
 c1 = fuente.render("Ataque 2",0,negro)
 c2 = fuente.render("Ataque 3",0,negro)
 
 def CargaInicial(): #Cargas en ventana
     ventana.blit(FondoVentana,(0,0))
+    ventana.blit(GOLPE,(posX,posY-95))
     ventana.blit(CARGAR,(posX,posY))
     ventana.blit(ENEMIGO,(posXenemigo,posYenemigo))
+    ventana.blit(GOLPE2,(posXenemigo+100,posYenemigo-30))
     ventana.blit(cuenta,(35,15))
     ventana.blit(c0,(35,55))
     ventana.blit(c1,(35,95))
@@ -44,6 +48,8 @@ def Ambiente():
         ventana.blit(FondoVentana,(0,0))
         ventana.blit(CARGAR,(posX,posY))
         ventana.blit(ENEMIGO,(posXenemigo,posYenemigo))
+        ventana.blit(GOLPE,(posX,posY))
+        ventana.blit(GOLPE2,(posXenemigo+100,posYenemigo-30))
         ventana.blit(cuenta,(35,15))
         ventana.blit(c0,(35,55))
         ventana.blit(c1,(35,95))
@@ -65,11 +71,11 @@ while True:
                 if evento.key == K_DOWN:
                     if Contador < 2:
                         Contador += 1
-                        cuenta = fuente.render("Cuenta: "+str(Contador),0,verde)
+                        cuenta = fuente.render(str(Contador),0,verde)
                 elif evento.key == K_UP:
                     if Contador > 0:
                         Contador -= 1
-                        cuenta = fuente.render("Cuenta: "+str(Contador),0,verde)
+                        cuenta = fuente.render(str(Contador),0,verde)
                 elif evento.key == K_s:
                     print "S: Presionada"
                     S = True
@@ -89,7 +95,8 @@ while True:
                         pygame.time.wait(130)
                         pygame.display.update()
                     posX -= 200
-
+                    aleatorio = randint(0,100)
+                    print "Aleatorio: "+str(aleatorio)
 #----------- Menu --------------------------------------------------------------
             if Contador == 0:
                 c0 = fuente.render("Ataque 0: ",0,color)
@@ -124,7 +131,7 @@ while True:
                 c1 = fuente.render("Ataque 1: ",0,negro)
             #-------------------------------------------------
             if Contador == 2:
-                c2 = fuente.render("Ataque 3: ",0,color)
+                c2 = fuente.render("Ataque 2: ",0,color)
                 if S == True:
                     S = False
                     print "Ataque 2"
@@ -139,6 +146,26 @@ while True:
             else:
                 c2 = fuente.render("Ataque 2: ",0,negro)
 
+            if aleatorio < 40:
+                posYenemigo -= 30
+                for a in range(0,5):
+                    GOLPE = pygame.image.load("Enemigo/Llamas/llamasA-"+str(a)+".png")
+                    CargaInicial()
+                    pygame.time.wait(120)
+                    pygame.display.update()
+                GOLPE = pygame.image.load("Enemigo/Llamas/vacio.png")
+                aleatorio = 200
+                posYenemigo += 30
+            elif aleatorio > 40 and aleatorio < 80:
+                posYenemigo += 30
+                for a in range(0,6):
+                    GOLPE2 = pygame.image.load("Enemigo/Llamas/llamasflotantes-"+str(a)+".png")
+                    CargaInicial()
+                    pygame.time.wait(120)
+                    pygame.display.update()
+                GOLPE2 = pygame.image.load("Enemigo/Llamas/vacio.png")
+                aleatorio = 200
+                posYenemigo -= 30
 #----------- End ---------------------------------------------------------------
 
 #Ejecutar/Actualizar ventana:
